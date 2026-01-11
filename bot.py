@@ -1,35 +1,33 @@
-# =========================
-#   DISCORD BOT + WEB OK
-# =========================
+# =====================================
+#   DISCORD BOT + WEB SERVER (REPLIT)
+# =====================================
 
 import discord
-import os
 import threading
-from flask import Flask, request
+from flask import Flask
 
-# -------- CONFIG --------
+# ----------- CONFIG -----------
 
-TOKEN = os.getenv("TOKEN")  # ponelo como variable de entorno
+TOKEN = "PEGA_TU_TOKEN_AQUI"
+PORT = 8080
 
-PORT = int(os.getenv("PORT", 8080))
-
-# -------- FLASK WEB --------
+# ----------- WEB (REPLIT) -----------
 
 app = Flask("server")
 
 @app.route("/")
 def home():
-    return "OK", 200
+    return "OK"
 
 @app.route("/ping")
 def ping():
-    print("Ping recibido desde la web")
-    return "OK", 200
+    print("Ping recibido desde Replit web")
+    return "OK"
 
 def run_web():
     app.run(host="0.0.0.0", port=PORT)
 
-# -------- DISCORD BOT --------
+# ----------- DISCORD BOT -----------
 
 intents = discord.Intents.default()
 intents.presences = True
@@ -45,12 +43,12 @@ async def on_ready():
     print("=================================")
     await client.change_presence(
         status=discord.Status.online,
-        activity=discord.Game("Conectado al servidor web")
+        activity=discord.Game("Replit conectado")
     )
 
 @client.event
 async def on_disconnect():
-    print("Bot desconectado... intentando reconectar")
+    print("Bot desconectado... Discord lo va a reconectar solo")
 
 @client.event
 async def on_message(message):
@@ -58,15 +56,12 @@ async def on_message(message):
         return
 
     if message.content.lower() == "!ping":
-        await message.channel.send("OK")
+        await message.channel.send("OK desde Replit")
 
-# -------- START --------
+# ----------- START -----------
 
-if __name__ == "__main__":
-    # Inicia web en segundo plano
-    t = threading.Thread(target=run_web)
-    t.daemon = True
-    t.start()
+t = threading.Thread(target=run_web)
+t.daemon = True
+t.start()
 
-    # Inicia bot
-    client.run(TOKEN)
+client.run(TOKEN)
